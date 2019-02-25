@@ -137,9 +137,9 @@ export class WebApi {
 
         let userAgent: string;
         const nodeApiName: string = 'azure-devops-node-api';
-        const nodeApiVersion: string = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8')).version;
         const osName: string = os.platform();
         const osVersion: string = os.release();
+        const nodeApiVersion: string = this.getNodeApiVersion("1.2.3");
 
         if (requestSettings) {
             userAgent = `${requestSettings.productName}/${requestSettings.productVersion} (${nodeApiName} ${nodeApiVersion}; ${osName} ${osVersion})`;
@@ -414,6 +414,15 @@ export class WebApi {
             decryptedContent += decipher.final('utf8');
 
             return decryptedContent;
+        }
+    }
+
+    private getNodeApiVersion(defaultValue: string): string {
+        try {
+            let packageJson = fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8');
+            return JSON.parse(packageJson).version
+        } catch (error) {
+            return defaultValue;
         }
     }
 }
